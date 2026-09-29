@@ -12,14 +12,9 @@ Your coding agent hits an error. It calls `archaeo` through MCP and gets the lik
 
 The v0.2 follow-up is `archaeo why file:line`, which explains *why* a line of code exists by searching PRs, reviews, and issues.
 
-## Why we are doing this
+## Project outcomes
 
-The goals below are listed in priority order:
-
-1. **Show work for a Sr. Backend AI Engineer role.** The project should show judgment around RAG, embeddings, vector databases, and LLM integration. That means measuring retrieval quality, handling errors, adding observability, and stating trade-offs.
-2. **Use it every day.** The author and other developers should be able to use the tool, then improve it from that experience.
-
-A senior screen looks at retrieval quality, failure behavior, reasons for the design, and query cost. The project should answer those questions with measurements.
+The project aims to find evidence-backed fixes for dependency errors and matching repairs in repository history. Evaluation will report retrieval quality, failure behavior, latency, and query cost against stated baselines.
 
 ## How we got here (decision log)
 
@@ -27,7 +22,7 @@ A senior screen looks at retrieval quality, failure behavior, reasons for the de
 |---|---|---|---|
 | 1 | RAG CLI over a local docs folder | Rejected as-is | This is a common RAG tutorial shape. Evals, trade-offs, and failure handling would give it more engineering depth. |
 | 2 | Obsidian plugin | Rejected | The space is crowded (Smart Connections, Copilot, RAG Chat, Analogy, and others). Obsidian's plugin runtime cannot host pgvector, hides backend work, takes weeks to review, and has a weak trust model because Obsidian cannot sandbox plugins. |
-| 3 | Standalone service indexing the Obsidian vault | Rejected | The author already has this workflow through Obsidian MCP and ai-memory. |
+| 3 | Standalone service indexing the Obsidian vault | Rejected | Existing Obsidian MCP and ai-memory workflows cover this need, so a separate service adds little to the project's debugging scope. |
 | 4 | Research real developer pain points | Found three candidates | See "Problem research". |
 | 5 | #1 "why is this code like this?" and #2 "stack trace to resolved issues" | **Chosen**, #2 primary | Developers are likely to need #2 across more errors. #1 mainly helps with older team repositories. |
 | 6 | One program or two? | **One program** | Both use GitHub ingestion, chunking, hybrid search, pgvector, and evals. #2 also needs #1's linked-fix-PR machinery. |
@@ -44,8 +39,8 @@ Most recurring pains came from blogs, Hacker News, and articles quoting Reddit. 
 
 - **Lost "why".** Teams forget why code exists. `git blame` gives a cryptic commit, and the reasoning may have vanished with an old Slack thread.
 - **Repeated debugging.** Runbooks and postmortems get buried, so the same errors are debugged from scratch.
-- **Lost saved content.** Bookmarks and Reddit saves are hard to search. The category is crowded, and it offers a weak backend engineering signal, so this idea was rejected.
-- **Agent memory across sessions.** The idea was rejected because the author already uses ai-memory.
+- **Lost saved content.** Bookmarks and Reddit saves are hard to search. The category is crowded and does not address the dependency-error workflow this project targets.
+- **Agent memory across sessions.** A separate memory product falls outside this project's issue and fix retrieval scope.
 
 ### Prior art
 
@@ -151,7 +146,7 @@ Use `--feedback` to track the useful rate in the README.
 - **Observability.** Add an OpenTelemetry span for each stage. Use structured pino logs with a trace ID, and track latency, tokens, cost, and cache hits. Do not log prompts or content by default.
 - **Privacy and trust.** Use local embeddings by default and collect no telemetry. Bind the API to localhost and get the token from `gh auth token`. The README must state exactly what leaves the machine in each mode.
 
-## Sr-level pitfalls to document in the README
+## Engineering pitfalls to document in the README
 
 1. Publish a performance claim only after an eval supports it.
 2. Fixed-size chunking can split stack traces and code blocks.
@@ -168,18 +163,16 @@ Use `--feedback` to track the useful rate in the README.
 13. Weigh abstraction costs against provider lock-in. Start with one interface and one implementation.
 14. State scaling limits plainly: one Postgres instance and synchronous ingestion. Add a queue and workers later if needed.
 
-## Milestones (small, learn-as-you-go)
+## Milestones
 
-One sitting per milestone. Before starting, review its learning goal and open questions, and agree on prerequisites, ownership, exercise, and completion checks. Afterward, write down what surprised you.
-
-Setup comes first. Discuss and agree on the evidence contract next, before moving into Phases A through F, and record implementation completion separately from the learner's demonstration of each milestone's learning objective. Passing implementation checks alone leaves the learning review open.
+Complete repository setup first. Define and record the evidence contract next, before implementation begins in Phases A through F. Keep milestone outcomes and acceptance evidence in GitHub Issues.
 
 ### Opening milestones
 
-| M | Deliverable | Learn | Ownership | Done when |
-|---|---|---|---|---|
-| **Setup** | Git repository on `main`, public GitHub repo, agent workflow docs (`AGENTS.md`, `docs/agents/`), five triage labels, minimal README | How tasks, agent instructions, and domain documentation shape development | Assistant handles setup, configuration, and checks. Learner reviews the workflow and explains how it protects learner exercises. | **Implementation:** initial commit pushed and labels exist. **Learning:** learner explains the workflow, such as how `ready-for-human` changes assistant behavior. |
-| **Evidence contract** | To be defined. Discuss and agree on its outcome before starting. | To be agreed | To be agreed | To be agreed |
+| M | Deliverable | Done when |
+|---|---|---|
+| **Setup** | Git repository on `main`, public GitHub repo, agent workflow docs (`AGENTS.md`, `docs/agents/`), five triage labels, minimal README | Initial commit pushed and labels exist. |
+| **Evidence contract** | Define and record the evaluation outcome before implementation starts. | Evidence contract recorded after setup and before M0. |
 
 TypeScript tooling and pre-commit hooks arrive with M0, the first code milestone. Choose a license before releasing any code.
 
@@ -187,52 +180,52 @@ The embeddings and pgvector decisions remain under evaluation. Milestones that n
 
 ### Phase A: Foundations
 
-| M | Deliverable | Learn | Done when |
-|---|---|---|---|
-| **M0** | Repo skeleton: TS strict, pnpm workspace, vitest, eslint, docker-compose with pgvector, CI running tests | Project hygiene baseline | `pnpm test` passes locally and in CI. `docker compose up` starts Postgres with the `vector` extension. |
-| **M1** | Schema and migrations: `repos`, `documents`, `chunks(embedding vector(N), tsv tsvector)`, HNSW index | Vector column types, distance metrics (cosine/L2/IP), HNSW vs IVFFlat | Insert a hand-made vector and query its nearest neighbors in SQL. |
-| **M2** | In-process embeddings module (transformers.js, small model), batch processing, and content-hash cache | What embeddings are, dimensions, normalization, and why the model version must be stored | Embed 3 sentences. Similar ones should have higher cosine similarity, and unit tests should pass. |
+| M | Deliverable | Done when |
+|---|---|---|
+| **M0** | Repo skeleton: TS strict, pnpm workspace, vitest, eslint, docker-compose with pgvector, CI running tests | `pnpm test` passes locally and in CI. `docker compose up` starts Postgres with the `vector` extension. |
+| **M1** | Schema and migrations: `repos`, `documents`, `chunks(embedding vector(N), tsv tsvector)`, HNSW index | Insert a hand-made vector and query its nearest neighbors in SQL. |
+| **M2** | In-process embeddings module (transformers.js, small model), batch processing, and content-hash cache | Embed 3 sentences. Similar ones should have higher cosine similarity, and unit tests should pass. |
 
 ### Phase B: Ingest
 
-| M | Deliverable | Learn | Done when |
-|---|---|---|---|
-| **M3** | GitHub client: GraphQL pagination for one repo's issues and comments, typed errors, retry/backoff, rate-limit awareness | External API ingestion that handles failures and rate limits | Fetch all closed issues from a small repo without hitting limits. Test a retry with a fake 429. |
-| **M4** | Issue chunker for titles, bodies, and comments, aware of stack traces and code blocks, with metadata for repo, number, state, labels, linked PR, and dates | Chunking strategies and why structure matters | Unit tests show that stack traces and code blocks stay intact. |
-| **M5** | Idempotent ingest pipeline: upsert, hash dedupe, cursor sync | Idempotency and incremental sync | Run ingest twice with no changes. Then add an issue and confirm it appears after `sync`. |
+| M | Deliverable | Done when |
+|---|---|---|
+| **M3** | GitHub client: GraphQL pagination for one repo's issues and comments, typed errors, retry/backoff, rate-limit awareness | Fetch all closed issues from a small repo without hitting limits. Test a retry with a fake 429. |
+| **M4** | Issue chunker for titles, bodies, and comments, aware of stack traces and code blocks, with metadata for repo, number, state, labels, linked PR, and dates | Unit tests show that stack traces and code blocks stay intact. |
+| **M5** | Idempotent ingest pipeline: upsert, hash dedupe, cursor sync | Run ingest twice with no changes. Then add an issue and confirm it appears after `sync`. |
 
 ### Phase C: Retrieval + evals (evals before optimization)
 
-| M | Deliverable | Learn | Done when |
-|---|---|---|---|
-| **M6** | Vector search and `archaeo search "<text>"` CLI | kNN in pgvector, top-k | Returns sensible issues for a pasted error. |
-| **M7** | Golden-set miner (duplicate-closed issues, time split) | Eval design and leakage | Save 50 or more pairs as JSON. |
-| **M8** | Eval runner: recall@5, MRR, and keyword-search baseline | Retrieval metrics | Print the first results table. |
-| **M9** | Hybrid search (tsvector + vector, RRF) | Hybrid retrieval and fusion | An ablation row shows the change versus vector-only search. |
+| M | Deliverable | Done when |
+|---|---|---|
+| **M6** | Vector search and `archaeo search "<text>"` CLI | Returns sensible issues for a pasted error. |
+| **M7** | Golden-set miner (duplicate-closed issues, time split) | Save 50 or more pairs as JSON. |
+| **M8** | Eval runner: recall@5, MRR, and keyword-search baseline | Print the first results table. |
+| **M9** | Hybrid search (tsvector + vector, RRF) | An ablation row shows the change versus vector-only search. |
 
 ### Phase D: The `trace` feature
 
-| M | Deliverable | Learn | Done when |
-|---|---|---|---|
-| **M10** | Stack trace parser and dependency resolver (frames → packages → lockfile versions → npm → GitHub repo) | Parsing and npm registry | Unit tests cover real Node traces. |
-| **M11** | `archaeo trace`: lazy fetch → embed → rank → cache, with version-aware boost | On-demand RAG and caching | A real error returns the right issue. The second run comes from cache. |
-| **M12** | Own-repo layer: `archaeo init` and `sync` for the current repo, with merged results | Multi-scope retrieval | A trace shows hits from both dependencies and the current repo. |
+| M | Deliverable | Done when |
+|---|---|---|
+| **M10** | Stack trace parser and dependency resolver (frames → packages → lockfile versions → npm → GitHub repo) | Unit tests cover real Node traces. |
+| **M11** | `archaeo trace`: lazy fetch → embed → rank → cache, with version-aware boost | A real error returns the right issue. The second run comes from cache. |
+| **M12** | Own-repo layer: `archaeo init` and `sync` for the current repo, with merged results | A trace shows hits from both dependencies and the current repo. |
 
 ### Phase E: Daily use
 
-| M | Deliverable | Learn | Done when |
-|---|---|---|---|
-| **M13** | MCP server with `trace_error`, registered at user scope, plus a CLAUDE.md rule | MCP protocol and tool design for agents | Claude Code calls the tool automatically on a dependency error. |
-| **M14** | Observability: OTel spans, pino logs, latency/cache-hit metrics, Jaeger in compose | Tracing a RAG pipeline | Save a Jaeger screenshot showing one trace with all stages. |
-| **M15** | `--feedback` logging and start of dogfooding | Online vs offline metrics | The useful rate is visible after a week of use. |
+| M | Deliverable | Done when |
+|---|---|---|
+| **M13** | MCP server with `trace_error`, registered at user scope, plus a CLAUDE.md rule | Claude Code calls the tool automatically on a dependency error. |
+| **M14** | Observability: OTel spans, pino logs, latency/cache-hit metrics, Jaeger in compose | Save a Jaeger screenshot showing one trace with all stages. |
+| **M15** | `--feedback` logging and start of dogfooding | The useful rate is visible after a week of use. |
 
 ### Phase F: Proof
 
-| M | Deliverable | Learn | Done when |
-|---|---|---|---|
-| **M16** | Agent baseline eval: Claude + `gh` vs Claude + archaeo (accuracy, latency, tokens) | Evaluating agents and measuring cost | Publish a comparison table with real numbers. |
-| **M17** | Optional LLM: `trace --answer` and LLM judge in evals, with an optional reranker ablation | LLM integration and judge bias | Add an answer-faithfulness metric to the table. |
-| **M18** | README (pitfalls, limitations, prior art, results), ADRs, demo `pg_dump` snapshot, publish | Communicating trade-offs | Public repo. A stranger can run `archaeo demo` in minutes. |
+| M | Deliverable | Done when |
+|---|---|---|
+| **M16** | Agent baseline eval: Claude + `gh` vs Claude + archaeo (accuracy, latency, tokens) | Publish a comparison table with real numbers. |
+| **M17** | Optional LLM: `trace --answer` and LLM judge in evals, with an optional reranker ablation | Add an answer-faithfulness metric to the table. |
+| **M18** | README (pitfalls, limitations, prior art, results), ADRs, demo `pg_dump` snapshot, publish | Public repo. A stranger can run `archaeo demo` in minutes. |
 
 ### v0.2 backlog
 

@@ -1,8 +1,5 @@
 # Domain documentation
 
-Use a root CONTEXT.md glossary and docs/adr/ for architecture decisions.
-Create them when terms or decisions are resolved.
+Use the project brief for product scope and a root `CONTEXT.md` glossary for shared terms. Put consequential architecture decisions in `docs/adr/` after the trade-off is decided.
 
-Before relevant work, read existing domain documentation and applicable
-ADRs. Use established terminology and surface conflicts explicitly.
-Missing documents do not block exploration.
+Before relevant work, read the project brief, existing glossary, and applicable ADRs. Use established terms and surface conflicts. Missing documents do not block exploration. Add the glossary or an ADR when a term or decision is settled.

@@ -1,10 +1,11 @@
-# Triage labels
+# Issue status labels
 
-- needs-triage: awaiting assessment.
-- needs-info: missing information.
-- ready-for-agent: specified work assigned to the assistant.
-- ready-for-human: work assigned to the learner.
-- wontfix: intentionally declined.
+| Label | Meaning |
+| --- | --- |
+| `needs-triage` | Scope or priority needs review. |
+| `needs-info` | Waiting for information from the reporter. |
+| `ready` | Scope and acceptance criteria are defined, and work can start when dependencies clear. |
+| `blocked` | A stated dependency or missing prerequisite prevents progress. |
+| `wontfix` | The issue will not be actioned. |
 
-A label does not override agreed ownership or authorize the assistant
-to complete a learner exercise.
+Keep dependency links in issue bodies. Status labels describe the issue state and do not assign ownership.

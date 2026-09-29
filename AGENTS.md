@@ -1,41 +1,27 @@
-# Working agreement
+# Repository guidance
 
-Use relevant Matt Pocock skills whenever their purpose applies.
-Read the applicable SKILL.md before using a skill. If unavailable,
-report that and follow its stated purpose.
+## Work and verification
 
-Use grilling for unresolved decisions; codebase-design for module
-interfaces; domain-modeling for terminology; research for decisions
-requiring primary-source evidence; and tdd for behavioral implementation
-slices. Use other relevant skills as their triggers arise.
+Track project scope, dependencies, acceptance criteria, and verification evidence in GitHub Issues. When planning milestones, keep implementation and focused tests in separate work units. Run the repository's ordinary verification for each change. Follow the [issue tracker conventions](docs/agents/issue-tracker.md) and [status labels](docs/agents/triage-labels.md).
 
-Tutoring and agreed ownership take precedence over skill defaults.
+Read [the project brief](docs/PROJECT_BRIEF.md) before planning project work. It records scope, milestones, and open decisions.
 
-Before each milestone, agree on its outcome, learning objective,
-prerequisites, ownership, exercise, and completion checks.
+## Source and generated files
 
-Give one concrete next action at a time. For learner-owned work,
-provide the exercise and wait for the learner's attempt. Review the
-reasoning and implementation, then ask about tradeoffs and failure modes.
-Give progressively stronger hints one at a time. Provide worked solutions
-only when explicitly requested.
+The planned CLI and MCP packages use TypeScript. Keep authored source and generated output distinct, and regenerate generated files with repository scripts. Do not edit generated output by hand.
 
-Track implementation complete and learning demonstrated separately.
-Attribute design and implementation honestly. Keep optional ideas in
-the backlog. Record project workflow without personal information.
+Record consequential architecture decisions in `docs/adr/` when their trade-offs merit a durable record. Use [the domain glossary](CONTEXT.md) for settled terms.
 
-Use the humanize skill when creating or revising user-facing documents
-and repository copy. Preserve technical meaning and factual claims.
-Omit AI co-author and generated-by trailers from commit messages. Keep
-all other work attribution accurate.
+## Configuration and hooks
 
-## Agent skills
+Use environment variables for runtime configuration. Keep `.env.example` free of secrets. Use package scripts for verification and Lefthook if repository hooks are added.
 
-### Issue tracker
-Use GitHub Issues. See docs/agents/issue-tracker.md.
+## Repository copy
 
-### Triage labels
-Use the default five-role vocabulary. See docs/agents/triage-labels.md.
+Use the humanize skill when creating or revising user-facing documents and repository copy. Preserve technical meaning and factual claims. Omit AI co-author and generated-by trailers from commit messages. Keep other attribution accurate. Record project workflow without personal information.
 
-### Domain docs
-Use one domain context. See docs/agents/domain.md.
+## Agent references
+
+- **Issue tracker:** use GitHub Issues. See [docs/agents/issue-tracker.md](docs/agents/issue-tracker.md).
+- **Triage labels:** use the project status labels. See [docs/agents/triage-labels.md](docs/agents/triage-labels.md).
+- **Domain docs:** use one project context. See [docs/agents/domain.md](docs/agents/domain.md).
