@@ -24,6 +24,11 @@ Track implementation complete and learning demonstrated separately.
 Attribute design and implementation honestly. Keep optional ideas in
 the backlog. Record project workflow without personal information.
 
+Use the humanize skill when creating or revising user-facing documents
+and repository copy. Preserve technical meaning and factual claims.
+Omit AI co-author and generated-by trailers from commit messages. Keep
+all other work attribution accurate.
+
 ## Agent skills
 
 ### Issue tracker

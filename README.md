@@ -1,37 +1,23 @@
 # archaeo
 
-Find the fixes buried in your dependencies' issue trackers and your own
-repository's history.
+Find fixes hidden in dependency issue trackers and repository history.
 
-archaeo is a planned self-hosted developer tool that takes a Node.js stack
-trace and retrieves relevant resolved GitHub issues and fix pull requests.
-It aims to connect errors to cited evidence: what went wrong, which version
-fixed it, and whether a documented workaround exists.
+`archaeo` is a planned, self-hosted developer tool. Give it a Node.js stack trace and it will search for resolved GitHub issues and fix pull requests from your dependencies, then check your repository's history for a matching repair. Each result should cite the issue or pull request and name the version that fixed the problem. If the source documents a workaround, include that too.
 
-The planned interfaces are a CLI for developers and an MCP server for AI
-coding agents. Retrieval will consider dependency versions and search both
-dependency issue trackers and the current repository's history.
+The planned interfaces are a CLI for developers and an MCP server for coding agents. Searches will account for installed dependency versions and include the current repository's history.
 
 ## Status
 
-**Planning — no runnable code yet.** Repository and agent workflow setup
-is complete. The next milestone is to agree on an evidence contract before
-implementation begins. Embeddings, pgvector, and the retrieval architecture
-remain decisions to evaluate.
+**Planning.** No runnable code yet. Repository and agent workflow setup is complete. The next milestone is an agreement on the evidence contract, and implementation waits until we reach it. Embeddings, pgvector, and the retrieval design remain under evaluation.
 
 ## What we want to measure
 
-- Retrieval quality against known issue/fix pairs.
-- Accuracy, latency, and cost compared with direct GitHub search.
-- Whether results provide useful citations and version information.
+Measure retrieval against known issue and fix pairs. Compare it with direct GitHub search by accuracy, latency, and cost, then check whether results give useful citations and version details.
 
-These are evaluation goals, not measured results or shipped capabilities.
+These are evaluation goals. We have no measurements or shipped capabilities to report yet.
 
 ## Project documents
 
-See [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md) for the current scope,
-milestones, and open decisions. Contributor and agent workflow lives in
-[AGENTS.md](AGENTS.md).
+The [project brief](docs/PROJECT_BRIEF.md) records the scope, milestones, and open decisions, while [AGENTS.md](AGENTS.md) describes contributor and agent workflow.
 
-No license has been chosen yet. One will be selected before any code is
-released.
+No license has been chosen. We will choose the project's license before the first release that includes code.
